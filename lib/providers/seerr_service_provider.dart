@@ -11,7 +11,6 @@ import 'package:fladder/providers/user_provider.dart';
 import 'package:fladder/seerr/seerr_chopper_service.dart';
 import 'package:fladder/seerr/seerr_models.dart';
 
-const tmbdUrl = 'https://image.tmdb.org/t/p/original';
 const kBrowserManagedCookie = '__browser_managed__';
 
 class SeerrService {
@@ -179,6 +178,8 @@ class SeerrService {
     String? language,
     SeerrMediaType? mediaType,
   }) async {
+    final serverUrl = ref.read(userProvider)?.seerrCredentials?.serverUrl;
+
     if (tvdbId != null) {
       if (tmdbId == null) return null;
       final tvResponse = await tvDetails(tvId: tmdbId, language: language);
@@ -196,8 +197,8 @@ class SeerrService {
         jellyfinItemId: details.mediaInfo?.primaryJellyfinMediaId,
         title: details.name ?? '',
         overview: details.overview ?? '',
-        posterUrl: details.posterUrl,
-        backdropUrl: details.backdropUrl,
+        posterUrl: details.posterUrlFor(serverUrl),
+        backdropUrl: details.backdropUrlFor(serverUrl),
         mediaStatus: details.mediaInfo?.mediaStatus,
         seasons: details.seasons,
         seasonStatuses: seasonStatusMap.isEmpty ? null : seasonStatusMap,
@@ -223,8 +224,8 @@ class SeerrService {
           jellyfinItemId: details.mediaInfo?.primaryJellyfinMediaId,
           title: details.name ?? '',
           overview: details.overview ?? '',
-          posterUrl: details.posterUrl,
-          backdropUrl: details.backdropUrl,
+          posterUrl: details.posterUrlFor(serverUrl),
+          backdropUrl: details.backdropUrlFor(serverUrl),
           mediaStatus: details.mediaInfo?.mediaStatus,
           seasons: details.seasons,
           seasonStatuses: seasonStatusMap.isEmpty ? null : seasonStatusMap,
@@ -246,8 +247,8 @@ class SeerrService {
           jellyfinItemId: details.mediaInfo?.primaryJellyfinMediaId,
           title: details.title ?? '',
           overview: details.overview ?? '',
-          posterUrl: details.posterUrl,
-          backdropUrl: details.backdropUrl,
+          posterUrl: details.posterUrlFor(serverUrl),
+          backdropUrl: details.backdropUrlFor(serverUrl),
           mediaStatus: details.mediaInfo?.mediaStatus,
           mediaInfo: details.mediaInfo,
           releaseYear: releaseYear,
@@ -334,6 +335,8 @@ class SeerrService {
     final type = _resolveMediaType(item);
     if (type == null) return null;
 
+    final serverUrl = ref.read(userProvider)?.seerrCredentials?.serverUrl;
+
     final tmdbId = item.id ?? item.mediaInfo?.tmdbId ?? 0;
     final title = type == SeerrMediaType.tvshow
         ? (item.name ?? item.originalName ?? item.title ?? '')
@@ -351,8 +354,8 @@ class SeerrService {
       jellyfinItemId: item.mediaInfo?.primaryJellyfinMediaId,
       title: title,
       overview: item.overview ?? '',
-      posterUrl: item.posterUrl,
-      backdropUrl: item.backdropUrl,
+      posterUrl: item.posterUrlFor(serverUrl),
+      backdropUrl: item.backdropUrlFor(serverUrl),
       mediaStatus: item.mediaInfo?.status != null ? SeerrMediaStatus.fromRaw(item.mediaInfo?.status) : null,
       mediaInfo: item.mediaInfo,
       releaseYear: releaseYear,

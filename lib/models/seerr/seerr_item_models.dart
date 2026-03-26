@@ -45,6 +45,46 @@ String? resolveServerUrl({required String? path, required String? serverUrl}) {
   return '$cleanServerUrl${needsSlash ? '/' : ''}$trimmed';
 }
 
+/// Builds a Seerr image-proxy URL for a TMDB image path.
+///
+/// When [serverUrl] is provided the resulting URL routes through Seerr's
+/// built-in image cache/proxy (`/imageproxy/tmdb/t/p/<size><path>`),
+/// which is required in environments where clients cannot reach the TMDB
+/// CDN directly.
+///
+/// [tmdbSizePath] is the TMDB size segment without leading or trailing
+/// slashes, e.g. `'t/p/w500'`, `'t/p/original'`, or `'t/p/w185'`.
+///
+/// Falls back to a direct TMDB CDN URL when [serverUrl] is absent.
+String? seerrProxyImageUrl({
+  required String? path,
+  required String tmdbSizePath,
+  String? serverUrl,
+}) {
+  if (path == null) return null;
+  final trimmed = path.trim();
+  if (trimmed.isEmpty) return null;
+
+  // Already an absolute URL – return as-is (covers both proxy and direct CDN).
+  if (hasHttpScheme(trimmed)) return trimmed;
+
+  // Relative imageproxy path already constructed (e.g. /imageproxy/tmdb/...).
+  if (trimmed.startsWith('/imageproxy/')) {
+    return resolveServerUrl(path: trimmed, serverUrl: serverUrl);
+  }
+
+  // Regular TMDB relative path (e.g. /abc123.jpg).
+  if (serverUrl != null && serverUrl.trim().isNotEmpty) {
+    final cleanBase = serverUrl.trim().endsWith('/')
+        ? serverUrl.trim().substring(0, serverUrl.trim().length - 1)
+        : serverUrl.trim();
+    return '$cleanBase/imageproxy/tmdb/$tmdbSizePath$trimmed';
+  }
+
+  // No server URL available – fall back to direct TMDB CDN URL.
+  return 'https://image.tmdb.org/$tmdbSizePath$trimmed';
+}
+
 ImageData? tmdbPrimaryImage({required String keyPrefix, required String? posterPath}) {
   final url = tmdbUrl(_tmdbPosterBaseUrl, posterPath);
   if (url == null) return null;

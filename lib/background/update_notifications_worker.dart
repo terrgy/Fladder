@@ -235,7 +235,7 @@ Future<List<NotificationModel>> _fetchAndNotifySeerrRequestsForAccount(
             if (detailsResp.isSuccessful && detailsResp.body != null) {
               final SeerrTvDetails details = detailsResp.body!;
               title = details.name;
-              image = details.posterUrl;
+              image = details.posterUrlFor(seerrBase);
               payload = NotificationHelpers.buildSeerrDeepLink('tvshow', tmdbId);
             }
           } else {
@@ -243,7 +243,7 @@ Future<List<NotificationModel>> _fetchAndNotifySeerrRequestsForAccount(
             if (detailsResp.isSuccessful && detailsResp.body != null) {
               final SeerrMovieDetails details = detailsResp.body!;
               title = details.title;
-              image = details.posterUrl;
+              image = details.posterUrlFor(seerrBase);
               payload = NotificationHelpers.buildSeerrDeepLink('movie', tmdbId);
             }
           }

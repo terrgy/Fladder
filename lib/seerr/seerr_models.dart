@@ -5,6 +5,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:fladder/models/item_base_model.dart';
 import 'package:fladder/models/seerr/seerr_dashboard_model.dart';
+import 'package:fladder/models/seerr/seerr_item_models.dart';
 import 'package:fladder/util/localization_helper.dart';
 
 part 'seerr_models.freezed.dart';
@@ -110,10 +111,6 @@ enum SeerrSearchMode {
 }
 
 typedef _SortValues = ({String movie, String tv});
-
-const String _tmdbImageBaseUrl = 'https://image.tmdb.org/t/p/original';
-const String _tmdbPosterBaseUrl = 'https://image.tmdb.org/t/p/w500';
-const String _tmdbProfileBaseUrl = 'https://image.tmdb.org/t/p/w185';
 
 enum SeerrSortBy {
   popularityDesc,
@@ -1429,10 +1426,9 @@ class SeerrCompany {
     String? logoPath,
   }) : _logoPath = logoPath;
 
-  String? get logoUrl {
-    if (_logoPath == null || _logoPath!.isEmpty) return null;
-    return '$_tmdbImageBaseUrl$_logoPath';
-  }
+  String? get logoUrl => logoUrlFor(null);
+  String? logoUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: _logoPath, tmdbSizePath: 't/p/original', serverUrl: serverUrl);
 
   factory SeerrCompany.fromJson(Map<String, dynamic> json) {
     return SeerrCompany(
@@ -1492,72 +1488,61 @@ class SeerrSearchCompanyResponse {
 }
 
 extension SeerrMovieDetailsExtension on SeerrMovieDetails {
-  String? get posterUrl {
-    if (internalPosterPath == null || internalPosterPath!.isEmpty) return null;
-    return '$_tmdbPosterBaseUrl$internalPosterPath';
-  }
+  String? get posterUrl => posterUrlFor(null);
+  String? posterUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalPosterPath, tmdbSizePath: 't/p/w500', serverUrl: serverUrl);
 
-  String? get backdropUrl {
-    if (internalBackdropPath == null || internalBackdropPath!.isEmpty) return null;
-    return '$_tmdbImageBaseUrl$internalBackdropPath';
-  }
+  String? get backdropUrl => backdropUrlFor(null);
+  String? backdropUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalBackdropPath, tmdbSizePath: 't/p/original', serverUrl: serverUrl);
 }
 
 extension SeerrCastExtension on SeerrCast {
-  String? get profileUrl {
-    if (internalProfilePath == null || internalProfilePath!.isEmpty) return null;
-    return '$_tmdbProfileBaseUrl$internalProfilePath';
-  }
+  String? get profileUrl => profileUrlFor(null);
+  String? profileUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalProfilePath, tmdbSizePath: 't/p/w185', serverUrl: serverUrl);
 }
 
 extension SeerrCrewExtension on SeerrCrew {
-  String? get profileUrl {
-    if (internalProfilePath == null || internalProfilePath!.isEmpty) return null;
-    return '$_tmdbProfileBaseUrl$internalProfilePath';
-  }
+  String? get profileUrl => profileUrlFor(null);
+  String? profileUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalProfilePath, tmdbSizePath: 't/p/w185', serverUrl: serverUrl);
 }
 
 extension SeerrTvDetailsExtension on SeerrTvDetails {
-  String? get posterUrl {
-    if (internalPosterPath == null || internalPosterPath!.isEmpty) return null;
-    return '$_tmdbPosterBaseUrl$internalPosterPath';
-  }
+  String? get posterUrl => posterUrlFor(null);
+  String? posterUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalPosterPath, tmdbSizePath: 't/p/w500', serverUrl: serverUrl);
 
-  String? get backdropUrl {
-    if (internalBackdropPath == null || internalBackdropPath!.isEmpty) return null;
-    return '$_tmdbImageBaseUrl$internalBackdropPath';
-  }
+  String? get backdropUrl => backdropUrlFor(null);
+  String? backdropUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalBackdropPath, tmdbSizePath: 't/p/original', serverUrl: serverUrl);
 }
 
 extension SeerrSeasonExtension on SeerrSeason {
-  String? get posterUrl {
-    if (internalPosterPath == null || internalPosterPath!.isEmpty) return null;
-    return '$_tmdbPosterBaseUrl$internalPosterPath';
-  }
+  String? get posterUrl => posterUrlFor(null);
+  String? posterUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalPosterPath, tmdbSizePath: 't/p/w500', serverUrl: serverUrl);
 }
 
 extension SeerrEpisodeExtension on SeerrEpisode {
-  String? get stillUrl {
-    if (internalStillPath == null || internalStillPath!.isEmpty) return null;
-    return '$_tmdbImageBaseUrl$internalStillPath';
-  }
+  String? get stillUrl => stillUrlFor(null);
+  String? stillUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalStillPath, tmdbSizePath: 't/p/original', serverUrl: serverUrl);
 }
 
 extension SeerrDiscoverItemExtension on SeerrDiscoverItem {
-  String? get posterUrl {
-    if (internalPosterPath == null || internalPosterPath!.isEmpty) return null;
-    return '$_tmdbPosterBaseUrl$internalPosterPath';
-  }
+  String? get posterUrl => posterUrlFor(null);
+  String? posterUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalPosterPath, tmdbSizePath: 't/p/w500', serverUrl: serverUrl);
 
-  String? get backdropUrl {
-    if (internalBackdropPath == null || internalBackdropPath!.isEmpty) return null;
-    return '$_tmdbImageBaseUrl$internalBackdropPath';
-  }
+  String? get backdropUrl => backdropUrlFor(null);
+  String? backdropUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalBackdropPath, tmdbSizePath: 't/p/original', serverUrl: serverUrl);
 }
 
 extension SeerrWatchProviderExtension on SeerrWatchProvider {
-  String? get logoUrl {
-    if (internalLogoPath == null || internalLogoPath!.isEmpty) return null;
-    return '$_tmdbImageBaseUrl$internalLogoPath';
-  }
+  String? get logoUrl => logoUrlFor(null);
+  String? logoUrlFor(String? serverUrl) =>
+      seerrProxyImageUrl(path: internalLogoPath, tmdbSizePath: 't/p/original', serverUrl: serverUrl);
 }

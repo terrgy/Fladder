@@ -5,6 +5,7 @@ import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:fladder/providers/seerr_api_provider.dart';
 import 'package:fladder/providers/seerr_search_provider.dart';
+import 'package:fladder/providers/user_provider.dart';
 import 'package:fladder/screens/shared/outlined_text_field.dart';
 import 'package:fladder/seerr/seerr_models.dart';
 import 'package:fladder/theme.dart';
@@ -464,6 +465,7 @@ class _StudioSearchDialogState extends State<_StudioSearchDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final serverUrl = widget.notifier.ref.read(userProvider)?.seerrCredentials?.serverUrl;
     return AlertDialog(
       title: Text(context.localized.studio(1)),
       content: SizedBox(
@@ -497,10 +499,11 @@ class _StudioSearchDialogState extends State<_StudioSearchDialog> {
                   children: _searchResults.map(
                     (studio) {
                       final selected = _selectedStudio?.id == studio.id;
+                      final logoUrl = studio.logoUrlFor(serverUrl);
                       return ListTile(
                         selected: selected,
                         selectedTileColor: Theme.of(context).colorScheme.primaryContainer,
-                        trailing: studio.logoUrl != null
+                        trailing: logoUrl != null
                             ? Container(
                                 width: 120,
                                 height: 40,
@@ -510,7 +513,7 @@ class _StudioSearchDialogState extends State<_StudioSearchDialog> {
                                   borderRadius: FladderTheme.smallShape.borderRadius,
                                 ),
                                 child: CachedNetworkImage(
-                                  imageUrl: studio.logoUrl!,
+                                  imageUrl: logoUrl,
                                   fit: BoxFit.contain,
                                   errorWidget: (context, url, error) {
                                     return const Icon(IconsaxPlusBold.building);

@@ -7,6 +7,7 @@ import 'package:fladder/models/items/item_shared_models.dart';
 import 'package:fladder/models/seerr/seerr_dashboard_model.dart';
 import 'package:fladder/providers/seerr_api_provider.dart';
 import 'package:fladder/providers/seerr_user_provider.dart';
+import 'package:fladder/providers/user_provider.dart';
 import 'package:fladder/seerr/seerr_models.dart';
 import 'package:fladder/util/seerr_helpers.dart';
 
@@ -171,7 +172,7 @@ class SeerrDetails extends _$SeerrDetails {
         id: cast.id,
         name: cast.name ?? '',
         role: (cast.character?.trim().isEmpty ?? true) ? null : cast.character,
-        profileUrl: cast.profileUrl,
+        profileUrl: cast.profileUrlFor(ref.read(userProvider)?.seerrCredentials?.serverUrl),
         type: PersonKind.actor,
       );
     }
@@ -181,7 +182,7 @@ class SeerrDetails extends _$SeerrDetails {
         id: crew.id,
         name: crew.name ?? '',
         role: (crew.job?.trim().isEmpty ?? true) ? crew.department : crew.job,
-        profileUrl: crew.profileUrl,
+        profileUrl: crew.profileUrlFor(ref.read(userProvider)?.seerrCredentials?.serverUrl),
         type: _mapCrewKind(crew.job),
       );
     }

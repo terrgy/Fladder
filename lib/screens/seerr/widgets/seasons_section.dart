@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fladder/models/items/images_models.dart';
 import 'package:fladder/models/seerr/seerr_dashboard_model.dart';
 import 'package:fladder/providers/seerr/seerr_request_provider.dart';
+import 'package:fladder/providers/user_provider.dart';
 import 'package:fladder/screens/seerr/widgets/season_download_progress_widget.dart';
 import 'package:fladder/seerr/seerr_models.dart';
 import 'package:fladder/theme.dart';
@@ -30,6 +31,7 @@ class SeerrSeasonsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(seerrRequestProvider.notifier);
+    final serverUrl = ref.read(userProvider)?.seerrCredentials?.serverUrl;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -48,6 +50,7 @@ class SeerrSeasonsSection extends ConsumerWidget {
             final status = seasonStatuses[seasonNumber];
             final seasonDownloads =
                 model.mediaInfo?.downloadStatus?.where((d) => d.episode?.seasonNumber == seasonNumber).toList() ?? [];
+            final seasonPosterUrl = season.posterUrlFor(serverUrl);
 
             return Builder(builder: (context) {
               return FocusButton(
@@ -128,7 +131,7 @@ class SeerrSeasonsSection extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      if (season.posterUrl != null)
+                      if (seasonPosterUrl != null)
                         ClipRRect(
                           borderRadius: FladderTheme.smallShape.borderRadius,
                           child: SizedBox(
@@ -136,9 +139,7 @@ class SeerrSeasonsSection extends ConsumerWidget {
                             child: AspectRatio(
                               aspectRatio: 0.67,
                               child: FladderImage(
-                                image: season.posterUrl == null
-                                    ? null
-                                    : ImageData(path: season.posterUrl!, key: 'id${season.id}_season$seasonNumber'),
+                                image: ImageData(path: seasonPosterUrl, key: 'id${season.id}_season$seasonNumber'),
                                 fit: BoxFit.cover,
                               ),
                             ),
