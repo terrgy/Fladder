@@ -1,14 +1,18 @@
 import 'package:fladder/models/items/images_models.dart';
-import 'package:fladder/providers/api_provider.dart';
 
 const _tmdbPosterBaseUrl = 'https://image.tmdb.org/t/p/w500';
 const _tmdbBackdropBaseUrl = 'https://image.tmdb.org/t/p/w780';
+
+bool _hasHttpScheme(String url) {
+  final lower = url.toLowerCase();
+  return lower.startsWith('http://') || lower.startsWith('https://');
+}
 
 String? tmdbUrl(String base, String? path) {
   if (path == null) return null;
   final trimmed = path.trim();
   if (trimmed.isEmpty) return null;
-  if (hasHttpScheme(trimmed)) return trimmed;
+  if (_hasHttpScheme(trimmed)) return trimmed;
   return '$base$trimmed';
 }
 
@@ -20,7 +24,7 @@ String? resolveImageUrl({
   if (path == null || path.trim().isEmpty) return path;
   final trimmed = path.trim();
 
-  if (hasHttpScheme(trimmed)) {
+  if (_hasHttpScheme(trimmed)) {
     return trimmed;
   }
 
@@ -34,7 +38,7 @@ String? resolveServerUrl({required String? path, required String? serverUrl}) {
   if (path == null || path.trim().isEmpty) return path;
   final trimmed = path.trim();
 
-  if (hasHttpScheme(trimmed)) {
+  if (_hasHttpScheme(trimmed)) {
     return trimmed;
   }
 
@@ -66,7 +70,7 @@ String? seerrProxyImageUrl({
   if (trimmed.isEmpty) return null;
 
   // Already an absolute URL – return as-is (covers both proxy and direct CDN).
-  if (hasHttpScheme(trimmed)) return trimmed;
+  if (_hasHttpScheme(trimmed)) return trimmed;
 
   // Relative imageproxy path already constructed (e.g. /imageproxy/tmdb/...).
   if (trimmed.startsWith('/imageproxy/')) {
