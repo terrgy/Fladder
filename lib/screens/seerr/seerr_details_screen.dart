@@ -9,6 +9,7 @@ import 'package:fladder/models/items/images_models.dart';
 import 'package:fladder/models/items/item_shared_models.dart';
 import 'package:fladder/models/seerr/seerr_dashboard_model.dart';
 import 'package:fladder/providers/seerr/seerr_details_provider.dart';
+import 'package:fladder/providers/user_provider.dart';
 import 'package:fladder/screens/details_screens/components/overview_header.dart';
 import 'package:fladder/screens/seerr/seerr_media_management.dart';
 import 'package:fladder/screens/seerr/widgets/download_status_label.dart';
@@ -522,14 +523,14 @@ class _SeasonCard extends StatelessWidget {
   }
 }
 
-class _EpisodeCard extends StatelessWidget {
+class _EpisodeCard extends ConsumerWidget {
   final SeerrEpisode episode;
 
   const _EpisodeCard({required this.episode});
 
   @override
-  Widget build(BuildContext context) {
-    final posterUrl = episode.stillUrl;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final posterUrl = episode.stillUrlFor(ref.read(userProvider)?.seerrCredentials?.serverUrl);
     final posterImage = posterUrl == null
         ? null
         : ImageData(path: posterUrl, key: 'seerr_episode_${episode.id ?? episode.episodeNumber}');

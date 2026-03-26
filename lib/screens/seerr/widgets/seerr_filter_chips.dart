@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 
 import 'package:fladder/providers/seerr_search_provider.dart';
+import 'package:fladder/providers/user_provider.dart';
 import 'package:fladder/screens/seerr/widgets/seerr_filter_dialogs.dart';
 import 'package:fladder/screens/shared/chips/category_chip.dart';
 import 'package:fladder/seerr/seerr_models.dart';
@@ -27,6 +28,7 @@ class SeerrFilterChips extends ConsumerWidget {
     final watchRegions = searchState.watchProviderRegions;
     final selectedWatchProviders = filters.watchProviders.values.where((v) => v).length;
     final showFilters = searchMode == SeerrSearchMode.discoverMovies || searchMode == SeerrSearchMode.discoverTv;
+    final serverUrl = ref.read(userProvider)?.seerrCredentials?.serverUrl;
 
     final chips = [
       ExpressiveButton(
@@ -78,27 +80,30 @@ class SeerrFilterChips extends ConsumerWidget {
             label: Text(context.localized.streamingServices(selectedWatchProviders)),
             activeIcon: IconsaxPlusBold.video,
             items: filters.watchProviders,
-            labelBuilder: (item) => Row(
-              spacing: 8,
-              children: [
-                if (item.logoUrl?.isNotEmpty == true)
-                  SizedBox(
-                    width: 28,
-                    height: 28,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: CachedNetworkImage(
-                        imageUrl: item.logoUrl!,
-                        fit: BoxFit.contain,
-                        key: ValueKey(item.providerName),
-                        placeholder: (context, url) => const SizedBox(),
-                        errorWidget: (context, url, error) => const SizedBox(),
+            labelBuilder: (item) {
+              final logoUrl = item.logoUrlFor(serverUrl);
+              return Row(
+                spacing: 8,
+                children: [
+                  if (logoUrl?.isNotEmpty == true)
+                    SizedBox(
+                      width: 28,
+                      height: 28,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: CachedNetworkImage(
+                          imageUrl: logoUrl!,
+                          fit: BoxFit.contain,
+                          key: ValueKey(item.providerName),
+                          placeholder: (context, url) => const SizedBox(),
+                          errorWidget: (context, url, error) => const SizedBox(),
+                        ),
                       ),
                     ),
-                  ),
-                Flexible(child: Text(item.providerName ?? '')),
-              ],
-            ),
+                  Flexible(child: Text(item.providerName ?? '')),
+                ],
+              );
+            },
             onSave: (value) {
               notifier.setWatchProviders(value);
               notifier.submit();
